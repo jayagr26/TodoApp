@@ -1,48 +1,48 @@
 import 'package:flutter/material.dart';
-import 'Todo.dart';
+import 'package:todoapp/providers/todolist_provider.dart';
+import 'models/todo.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(BaseApp());
-}
-
-class BaseApp extends StatelessWidget {
-  const BaseApp({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'TodoApp',
-      debugShowCheckedModeBanner: false,
-      home: MyApp(),
-    );
-  }
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => TodoListModel(),
+        ),
+      ],
+      child: const MaterialApp(
+        title: 'TodoApp',
+        home: MyApp(),
+      ),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  final todos = <todo>[];
-  final taskController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('TodoApp'),
       ),
-      body: TodoList(todos: todos),
+      body: Consumer<TodoListModel>(
+        builder: ((context, value, child) => TodoList(todos: value.todoList)),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(
             context: context,
             builder: (BuildContext context) {
+              final taskController = TextEditingController();
+
               return AlertDialog(
                 content: TextFormField(
                   controller: taskController,
@@ -52,16 +52,20 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ),
                 actions: [
-                  ElevatedButton(
+                  TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
+                    },
+                    child: const Text('CANCEL'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
                       String task = taskController.text;
                       if (task.isNotEmpty) {
-                        setState(() {
-                          todos.add(todo(task: task));
-                          taskController.clear();
-                        });
-                      }
+                        Provider.of<TodoListModel>(context, listen: false)
+                            .add(Todo(task: task));
+                        Navigator.of(context).pop();
+                      } else {}
                     },
                     child: const Text('Add Task'),
                   ),
@@ -77,7 +81,7 @@ class _MyAppState extends State<MyApp> {
 }
 
 class TodoList extends StatefulWidget {
-  List<todo> todos;
+  List<Todo> todos;
   TodoList({super.key, required this.todos});
 
   @override
@@ -122,10 +126,8 @@ class _TodoItemState extends State<TodoItem> {
               });
             },
           ),
-          const SizedBox(
-            width: 10.0,
-          ),
-          Text(widget.task, style: Theme.of(context).textTheme.headline4),
+          Expanded(child: Text(widget.task)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
         ],
       ),
     );
