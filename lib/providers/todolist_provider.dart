@@ -14,5 +14,6 @@ class TodoListModel with ChangeNotifier {
   void edit(int index, Todo todo) {
     _todolist.removeAt(index);
     _todolist.insert(index, todo);
+    notifyListeners();
   }
 }
