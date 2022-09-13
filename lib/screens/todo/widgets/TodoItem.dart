@@ -18,32 +18,39 @@ class _TodoItemState extends State<TodoItem> {
   Widget build(BuildContext context) {
     return Card(
       elevation: 5.0,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Checkbox(
-            value: isChecked,
-            onChanged: (bool? value) {
-              setState(() {
-                isChecked = value!;
-              });
-            },
-          ),
-          Expanded(child: Text(widget.task)),
-          IconButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                        content: EditTask(
-                      index: widget.index,
-                    ));
-                  },
-                );
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            isChecked = isChecked ? false : true;
+          });
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Checkbox(
+              value: isChecked,
+              onChanged: (bool? value) {
+                setState(() {
+                  isChecked = value!;
+                });
               },
-              icon: const Icon(Icons.edit)),
-        ],
+            ),
+            Expanded(child: Text(widget.task)),
+            IconButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                          content: EditTask(
+                        index: widget.index,
+                      ));
+                    },
+                  );
+                },
+                icon: const Icon(Icons.edit)),
+          ],
+        ),
       ),
     );
   }
