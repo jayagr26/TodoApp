@@ -20,7 +20,9 @@ class _TodoPageState extends State<TodoPage> {
       appBar: AppBar(
         title: const Text('TodoApp'),
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/notes');
+          },
           icon: const Icon(Icons.menu),
         ),
       ),
